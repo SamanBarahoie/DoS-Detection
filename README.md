@@ -1,7 +1,9 @@
 
 # DoS Detection Dashboard
 
-This project is a simple dashboard for displaying Denial of Service (DoS) attacks using Flask, SocketIO, and Chart.js. The dashboard reads data from a CSV file that contains the number of SYN packets per IP address and displays them live on a line chart and in a table.
+Welcome to the Live DoS Attack Dashboard! This interactive platform provides real-time insights into Denial of Service (DoS) attacks, making it easy to monitor malicious activity on your network. Using Flask, SocketIO, and Chart.js, the dashboard continuously reads data from a CSV file that tracks the number of SYN packets sent from each IP address.
+
+With a dynamic line chart, you can visualize the frequency of SYN packets, allowing you to identify potential attacks as they happen. The live table displays the latest data, providing an easy-to-read overview of the attack details.
 
 ![dash](dash.png)
 
