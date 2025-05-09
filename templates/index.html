@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DoS Dashboard</title>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #ddd; padding: 0.5rem; text-align: left; }
+    th { background-color: #f4f4f4; }
+    #chart-container { width: 100%; height: 300px; }
+  </style>
+</head>
+<body>
+  <h1>Live DoS Packet Dashboard</h1>
+
+  <div id="chart-container">
+    <canvas id="lineChart"></canvas>
+  </div>
+
+  <h2>Top Offenders</h2>
+  <table>
+    <thead>
+      <tr><th>IP</th><th>Max SYN Count</th></tr>
+    </thead>
+    <tbody id="offenders"></tbody>
+  </table>
+
+  <script>
+    const socket = io();
+    let chart;
+
+    function updateTable(data) {
+      const agg = {};
+      data.forEach(({ ip, count }) => {
+        agg[ip] = Math.max(agg[ip] || 0, count);
+      });
+      const sorted = Object.entries(agg).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const tbody = document.getElementById('offenders');
+      tbody.innerHTML = '';
+      sorted.forEach(([ip, count]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${ip}</td><td>${count}</td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateChart(data) {
+      const labels = data.map(d => d.time);
+      const counts = data.map(d => d.count);
+      if (!chart) {
+        const ctx = document.getElementById('lineChart').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: { labels, datasets: [{ label: 'SYN Packets', data: counts }] },
+          options: { animation: false }
+        });
+      } else {
+        chart.data.labels = labels;
+        chart.data.datasets[0].data = counts;
+        chart.update();
+      }
+    }
+
+    socket.on('update', ({ data }) => {
+      updateChart(data);
+      updateTable(data);
+    });
+
+    setInterval(() => socket.emit('request_data'), 5000);
+  </script>
+</body>
+</html>
+
