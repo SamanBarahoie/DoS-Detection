@@ -33,13 +33,31 @@ Then, install all dependencies using the `requirements.txt` file:
 pip install -r requirements.txt
 ```
 
-## Running the Project
+### **Running the Project**
 
-1. After installing the dependencies, start the Flask server:
+1. **Start the firewall** (`fire.py`) to monitor and detect SYN packets:
+
+   ```bash
+   python fire.py
+   ```
+
+2. **Run the test script** (`test.py`) to simulate SYN flood packets and generate traffic for the dashboard to monitor:
+
+   ```bash
+   python test.py
+   ```
+
+3. Once the firewall and test script are running, **start the Flask server** to view the DoS attack data on the dashboard:
 
    ```bash
    python dashboard.py
    ```
+
+This sequence ensures the firewall is actively monitoring, test traffic is being generated, and the Flask server is displaying live updates on the dashboard.
+
+---
+
+
 2. Open your browser and navigate to:
 
    ```
